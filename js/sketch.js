@@ -26,19 +26,7 @@ function setup() {
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
   background(255);
-  
-  for (let i=0; i < 800; i = i + 20){
-    for(let j=0; j < 800; j = j + 20){
-      dir_x = i - mouseX;
-      dir_y = j - mouseY;
-      magnitude = sqrt(sq(dir_x)+sq(dir_y));
-      u_x = 10 * (dir_x / magnitude);
-      u_y = 10 * (dir_y / magnitude);
-      new_i = i + u_x;
-      new_j = j + u_y;
-      line(i, j, new_i, new_j);
-    }
-  }
+  rect(0,0,100,100);
 }
 
 // mousePressed() function is called once after every time a mouse button is pressed
