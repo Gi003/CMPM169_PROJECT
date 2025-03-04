@@ -1,6 +1,7 @@
 // sketch.js - purpose and description here
-// Author: Gio
-// Date: Jan 15 20205
+// Authors: Gio, Jaime
+// Date created: Jan 15 2025
+// Date updated: Feb 03 2025
 
 let canvasContainer;
 let centerHorz;
