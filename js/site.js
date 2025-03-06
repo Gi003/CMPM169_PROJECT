@@ -18,15 +18,26 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-// Create a flat plane for the ground
-const groundGeometry = new THREE.BoxGeometry(50, 50, 10);
-const groundMaterial = new THREE.MeshStandardMaterial({ 
+// Create a Grass Plane for the ground
+const grassGeometry = new THREE.PlaneGeometry(50, 50);
+const grassMaterial = new THREE.MeshStandardMaterial({
     color: 0x7CFC00,
+    side: THREE.DoubleSide
+});
+const grass = new THREE.Mesh(grassGeometry, grassMaterial);
+grass.rotation.x = -Math.PI / 2;
+grass.position.y = 0.001;
+scene.add(grass);
+
+// Create a Dirt Box for the ground
+const groundGeometry = new THREE.BoxGeometry(50, 50, 5);
+const groundMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0x725d4c,
     side: THREE.DoubleSide
 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = -5; // Box origin offset from top face
+ground.position.y = -2.5; // Box origin offset from top face
 scene.add(ground);
 
 // Create trees
