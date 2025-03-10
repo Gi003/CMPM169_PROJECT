@@ -77,7 +77,50 @@ audioLoader.load('https://cdnjs.cloudflare.com/mock-audio.mp3', function(buffer)
     }
 });
 
-function createSimpleTree(x, z, withAnimation = false) {
+function lerp(a, b, w) {
+    return a + (b - a)*w;
+}
+
+function initializeTree(group, x, z, withAnimation = false) {
+    // Set tree position
+    group.position.set(x, 0, z);
+
+    const targetScale = lerp(2/3, 4/3, Math.random());
+
+    // If animation requested, start with zero scale
+    if (withAnimation) {
+        group.scale.set(0, 0, 0);
+
+        // Play grow sound
+        if (growSoundBuffer) {
+            growSound.setBuffer(growSoundBuffer);
+            growSound.setVolume(0.3);
+            growSound.setPlaybackRate(1.5); // Higher pitch for growth
+            growSound.play();
+        }
+    } else {
+        group.scale.set(targetScale, targetScale, targetScale)
+    }
+
+    scene.add(group);
+
+    // Add to trees array with additional properties
+    const treeObj = {
+        group: group,
+        isFalling: false,
+        isGrowing: withAnimation,
+        growthProgress: 0,
+        targetScale: targetScale,
+        fallAngle: 0,
+        fallDirection: Math.random() * Math.PI * 2, // Random direction to fall
+        removed: false
+    };
+
+    trees.push(treeObj);
+    return treeObj;
+}
+
+function createSimpleTreeModel() {
     const group = new THREE.Group();
     
     // Tree trunk
@@ -93,87 +136,37 @@ function createSimpleTree(x, z, withAnimation = false) {
     const top = new THREE.Mesh(topGeometry, topMaterial);
     top.position.y = 3.5; // Height of trunk (2) + half height of cone (1.5)
     group.add(top);
-    
-    // Set tree position
-    group.position.set(x, 0, z);
-    
-    // If animation requested, start with zero scale
-    if (withAnimation) {
-        group.scale.set(0, 0, 0);
-        
-        // Play grow sound
-        if (growSoundBuffer) {
-            growSound.setBuffer(growSoundBuffer);
-            growSound.setVolume(0.3);
-            growSound.setPlaybackRate(1.5); // Higher pitch for growth
-            growSound.play();
-        }
-    }
-    
-    scene.add(group);
-    
-    // Add to trees array with additional properties
-    const treeObj = {
-        group: group,
-        isFalling: false,
-        isGrowing: withAnimation,
-        growthProgress: 0,
-        fallAngle: 0,
-        fallDirection: Math.random() * Math.PI * 2, // Random direction to fall
-        removed: false
-    };
-    
-    trees.push(treeObj);
-    return treeObj;
+
+    return group;
 }
 
 const gltfLoader = new THREE.GLTFLoader();
+const loadedModels = {};
 
-async function createTreeFromModel(src, x, z, withAnimation = false) {
-    const model =
-        await new Promise((resolve, reject) =>
-            gltfLoader.load(src, resolve, () => {}, reject));
-    const group = new THREE.Group();
-    group.add(model.scene);
-    group.position.set(x, 0, z);
-    if (withAnimation) {
-        group.scale.set(0, 0, 0);
-        if (growSoundBuffer) {
-            growSound.setBuffer(growSoundBuffer);
-            growSound.setVolume(0.3);
-            growSound.setPlaybackRate(1.5); // Higher pitch for growth
-            growSound.play();
-        }
+async function loadTreeModel(src, x, z, withAnimation = false) {
+    let model = loadedModels[src];
+    if (!model) {
+        model =
+            await new Promise((resolve, reject) =>
+                gltfLoader.load(src, resolve, () => {}, reject));
+        loadedModels[src] = model;
     }
-    scene.add(group);
-    const treeObj = {
-        group: group,
-        isFalling: false,
-        isGrowing: withAnimation,
-        growthProgress: 0,
-        fallAngle: 0,
-        fallDirection: Math.random() * Math.PI * 2, // Random direction to fall
-        removed: false
-    };
-    trees.push(treeObj);
-    return treeObj;
+    const group = new THREE.Group();
+    group.add(model.scene.clone());
+    return group;
 }
 
 const treeCreators = [
-    (...args) =>
-        createSimpleTree(...args),
-    (...args) =>
-        createTreeFromModel("./models/tree1.glb", ...args),
-    (...args) =>
-        createTreeFromModel("./models/tree2.glb", ...args),
-    (...args) =>
-        createTreeFromModel("./models/tree3.glb", ...args)
+    createSimpleTreeModel,
+    loadTreeModel.bind(null, "./models/tree1.glb"),
+    loadTreeModel.bind(null, "./models/tree2.glb"),
+    loadTreeModel.bind(null, "./models/tree3.glb")
 ];
 
-function createTree(...args) {
-    treeCreators[
+async function createTree(...args) {
+    return initializeTree(await treeCreators[
         Math.floor(Math.random()*treeCreators.length)%treeCreators.length
-    ](...args);
+    ](), ...args);
 }
 
 // Place trees randomly
@@ -350,7 +343,7 @@ function animate() {
                 
                 // Ease function for smoother animation
                 const easeOutQuad = function(t) { return t * (2 - t); };
-                const scaleFactor = easeOutQuad(tree.growthProgress);
+                const scaleFactor = easeOutQuad(tree.growthProgress)*tree.targetScale;
                 
                 // Scale the tree
                 tree.group.scale.set(scaleFactor, scaleFactor, scaleFactor);
@@ -362,7 +355,11 @@ function animate() {
             } else {
                 // Growth complete
                 tree.isGrowing = false;
-                tree.group.scale.set(1, 1, 1);
+                tree.group.scale.set(
+                    tree.targetScale,
+                    tree.targetScale,
+                    tree.targetScale
+                );
                 tree.group.rotation.set(0, 0, 0);
             }
         }
