@@ -77,7 +77,7 @@ audioLoader.load('https://cdnjs.cloudflare.com/mock-audio.mp3', function(buffer)
     }
 });
 
-function createTree(x, z, withAnimation = false) {
+function createSimpleTree(x, z, withAnimation = false) {
     const group = new THREE.Group();
     
     // Tree trunk
@@ -125,6 +125,55 @@ function createTree(x, z, withAnimation = false) {
     
     trees.push(treeObj);
     return treeObj;
+}
+
+const gltfLoader = new THREE.GLTFLoader();
+
+async function createTreeFromModel(src, x, z, withAnimation = false) {
+    const model =
+        await new Promise((resolve, reject) =>
+            gltfLoader.load(src, resolve, () => {}, reject));
+    const group = new THREE.Group();
+    group.add(model.scene);
+    group.position.set(x, 0, z);
+    if (withAnimation) {
+        group.scale.set(0, 0, 0);
+        if (growSoundBuffer) {
+            growSound.setBuffer(growSoundBuffer);
+            growSound.setVolume(0.3);
+            growSound.setPlaybackRate(1.5); // Higher pitch for growth
+            growSound.play();
+        }
+    }
+    scene.add(group);
+    const treeObj = {
+        group: group,
+        isFalling: false,
+        isGrowing: withAnimation,
+        growthProgress: 0,
+        fallAngle: 0,
+        fallDirection: Math.random() * Math.PI * 2, // Random direction to fall
+        removed: false
+    };
+    trees.push(treeObj);
+    return treeObj;
+}
+
+const treeCreators = [
+    (...args) =>
+        createSimpleTree(...args),
+    (...args) =>
+        createTreeFromModel("./models/tree1.glb", ...args),
+    (...args) =>
+        createTreeFromModel("./models/tree2.glb", ...args),
+    (...args) =>
+        createTreeFromModel("./models/tree3.glb", ...args)
+];
+
+function createTree(...args) {
+    treeCreators[
+        Math.floor(Math.random()*treeCreators.length)%treeCreators.length
+    ](...args);
 }
 
 // Place trees randomly
