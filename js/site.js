@@ -265,6 +265,13 @@ function onMouseDown(event) {
     event.preventDefault();
 }
 
+function setCameraDistance(dist) {
+    camera.position.set(0, 0, 0);
+    camera.position.add(camera.getWorldDirection());
+    camera.position.multiplyScalar(-dist);
+    camera.lookAt(0, 0, 0);
+}
+
 function onMouseMove(event) {
     if (isDragging) {
         const deltaMove = {
@@ -272,6 +279,7 @@ function onMouseMove(event) {
             y: event.clientY - previousMousePosition.y
         };
         
+        /*
         // Rotate scene based on mouse movement
         scene.rotation.y += deltaMove.x * 0.01;
         
@@ -279,6 +287,20 @@ function onMouseMove(event) {
         const potentialRotation = scene.rotation.x + deltaMove.y * 0.01;
         if (potentialRotation < Math.PI/4 && potentialRotation > -Math.PI/4) {
             scene.rotation.x = potentialRotation;
+        }
+        */
+
+        // Rotate camera instead of scene (attempt to fix raycast problem)
+        const dist = camera.position.length();
+        camera.rotateY(-deltaMove.x*0.005);
+        const quat = camera.quaternion.clone();
+        camera.rotateX(-deltaMove.y*0.005);
+        setCameraDistance(dist);
+        // weird behavior when i try to constrain camera's rotation by camera.rotation,
+        // doing it by position instead
+        if (camera.position.y > dist*3/4 || camera.position.y < dist/8) {
+            camera.quaternion.copy(quat);
+            setCameraDistance(dist);
         }
         
         previousMousePosition = {
