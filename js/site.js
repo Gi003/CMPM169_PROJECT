@@ -188,8 +188,9 @@ plantTreeBtn.addEventListener('click', function() {
     }
 });
 
+//Raycasting handling----------------------------------------------------------------------
 function onMouseClick(event) {
-    // Calculate mouse position in normalized device coordinates (-1 to +1)
+    // Normalize mouse coords
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     
@@ -240,8 +241,37 @@ function onMouseClick(event) {
                     fallSound.play();
                 }
             }
+
+            //Removing trees 
+            trees.forEach((tree, index) => {
+                if (tree.removed) {
+                    trees.splice(index,1);
+                }
+            });
         }
     }
+
+    console.log(trees);
+    num_trees = trees.length;
+    console.log('Length',num_trees);
+    //Check number of trees 
+    switch (num_trees) {
+        case 30:
+            
+            console.log('30')
+        break;
+        case 20:
+            console.log('20')
+        break;
+        case 10:
+            console.log('10')
+        break;
+        case 5:
+            console.log('5')
+        break;
+        default:
+    }
+
 }
 
 // Set up orbit controls for rotation
@@ -325,7 +355,7 @@ window.addEventListener('resize', function() {
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    
+
     // Handle falling trees
     trees.forEach((tree, index) => {
         if (tree.isFalling) {
