@@ -64,18 +64,37 @@ const audioLoader = new THREE.AudioLoader();
 // Use a buffer sound for the falling effect
 let fallSoundBuffer = null;
 let growSoundBuffer = null;
+let insectSoundBuffer = null;
+let birdSoundBuffer = null;
+let rumerSoundBuffer = null;
 //Chopping sound
 audioLoader.load('../sounds/chop.wav', function(buffer) {
     fallSoundBuffer = buffer;
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
 });
-
+//Growing Sound
 audioLoader.load('../sounds/growing.mp3', function(buffer) {
     growSoundBuffer = buffer;
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
 });
+
+//Insect Sound
+audioLoader.load('../sounds/grasshoppers.wav', function(buffer) {
+    insectSoundBuffer = buffer;
+    insectSoundBuffer.loop();
+}, function() {}, function(error) {
+    console.error('Error loading sound:', error);
+});
+
+//Bird Sounds
+audioLoader.load('../sounds/birds.wav', function(buffer) {
+    birdSoundBuffer = buffer;
+}, function() {}, function(error) {
+    console.error('Error loading sound:', error);
+});
+
 
 
 function lerp(a, b, w) {
@@ -261,6 +280,7 @@ function onMouseClick(event) {
         }
     }
 
+    //Checking for enviornmental sounds 
     console.log(trees);
     num_trees = trees.length;
     console.log('Length',num_trees);
