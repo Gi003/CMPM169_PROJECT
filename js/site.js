@@ -26,7 +26,7 @@ const grassMaterial = new THREE.MeshStandardMaterial({
 });
 const grass = new THREE.Mesh(grassGeometry, grassMaterial);
 grass.rotation.x = -Math.PI / 2;
-grass.position.y = 0.001;
+grass.position.y = 0.005;
 scene.add(grass);
 
 // Create a Dirt Box for the ground
@@ -44,7 +44,7 @@ scene.add(ground);
 const trees = [];
 const numTrees = 20;
 
-// Create an AudioListener and add it to the camera
+// Audio Implementation-----------------------------------------------------------
 const listener = new THREE.AudioListener();
 camera.add(listener);
 
@@ -57,30 +57,24 @@ const audioLoader = new THREE.AudioLoader();
 // Use a buffer sound for the falling effect
 let fallSoundBuffer = null;
 let growSoundBuffer = null;
-audioLoader.load('https://cdnjs.cloudflare.com/mock-audio.mp3', function(buffer) {
+//Chopping sound
+audioLoader.load('../sounds/chop.wav', function(buffer) {
     fallSoundBuffer = buffer;
-    growSoundBuffer = buffer; // Using the same buffer for simplicity
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
-    // Create a fallback audio context for sound simulation
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    fallSoundBuffer = audioContext.createBuffer(1, 44100, 44100);
-    const bufferData = fallSoundBuffer.getChannelData(0);
-    for (let i = 0; i < bufferData.length; i++) {
-        bufferData[i] = Math.random() * 2 - 1;
-    }
-    
-    growSoundBuffer = audioContext.createBuffer(1, 44100, 44100);
-    const growBufferData = growSoundBuffer.getChannelData(0);
-    for (let i = 0; i < growBufferData.length; i++) {
-        growBufferData[i] = Math.sin(i * 0.01) * Math.random() * 0.5;
-    }
+});
+//Growing sound
+audioLoader.load('../sounds/growing.mp3', function(buffer) {
+    fallSoundBuffer = buffer;
+}, function() {}, function(error) {
+    console.error('Error loading sound:', error);
 });
 
 function lerp(a, b, w) {
     return a + (b - a)*w;
 }
 
+//Tree creation------------------------------------------------------------------------
 function initializeTree(group, x, z, withAnimation = false) {
     // Set tree position
     group.position.set(x, 0, z);
