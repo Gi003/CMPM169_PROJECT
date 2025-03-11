@@ -18,22 +18,29 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
+// Create a Texture Loader
+const textureLoader = new THREE.TextureLoader();
+
+// Load Texture for grass
+const grassTexture = textureLoader.load('./textures/rocky_terrain_02_diff_4k.jpg');
+
 // Create a Grass Plane for the ground
 const grassGeometry = new THREE.PlaneGeometry(50, 50);
 const grassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x7CFC00,
-    side: THREE.DoubleSide
+    map: grassTexture
 });
 const grass = new THREE.Mesh(grassGeometry, grassMaterial);
 grass.rotation.x = -Math.PI / 2;
 grass.position.y = 0.001;
 scene.add(grass);
 
+// Load Texture For Dirt
+const groundTexture = textureLoader.load('./textures/forrest_ground_01_diff_1k.jpg');
+
 // Create a Dirt Box for the ground
 const groundGeometry = new THREE.BoxGeometry(50, 50, 5);
 const groundMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x725d4c,
-    side: THREE.DoubleSide
+    map: groundTexture
 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
@@ -120,6 +127,9 @@ function initializeTree(group, x, z, withAnimation = false) {
     return treeObj;
 }
 
+// load TreeTop Material
+const treeTopTexture = textureLoader.load("./textures/Cartoon_Grass_Texture.jpg");
+
 function createSimpleTreeModel() {
     const group = new THREE.Group();
     
@@ -132,7 +142,7 @@ function createSimpleTreeModel() {
     
     // Tree top (cone)
     const topGeometry = new THREE.ConeGeometry(1, 3, 8);
-    const topMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+    const topMaterial = new THREE.MeshStandardMaterial({ map: treeTopTexture });
     const top = new THREE.Mesh(topGeometry, topMaterial);
     top.position.y = 3.5; // Height of trunk (2) + half height of cone (1.5)
     group.add(top);
