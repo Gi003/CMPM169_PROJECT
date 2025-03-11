@@ -63,12 +63,13 @@ audioLoader.load('../sounds/chop.wav', function(buffer) {
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
 });
-//Growing sound
+
 audioLoader.load('../sounds/growing.mp3', function(buffer) {
-    fallSoundBuffer = buffer;
+    growSoundBuffer = buffer;
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
 });
+
 
 function lerp(a, b, w) {
     return a + (b - a)*w;
