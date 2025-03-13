@@ -84,7 +84,7 @@ const ambientSounds = [
     { name: "grasshoppers", threshold: 5, audio: new Audio("sounds/grasshoppers.wav"), volume: 0.1 },
     { name: "birds", threshold: 15, audio: new Audio("sounds/birds.wav"), volume: 0.2 },
     { name: "rumor", threshold: 20, audio: new Audio("sounds/rumor.wav"), volume: 1 },
-    { name: "turkey/cayote/idk/choose_guys", threshold: 30, audio: new Audio("https://assets.codepen.io/21542/howler-demo-3.mp3"), volume: 1 }
+    { name: "turkey/cayote/idk/choose_guys", threshold: 30, audio: new Audio("sounds/rumor.wav"), volume: 1 }
 ];
 ambientSounds.forEach((sound) => {
     sound.audio.loop = true;
