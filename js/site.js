@@ -49,7 +49,7 @@ scene.add(ground);
 
 // Create trees
 const trees = [];
-const numTrees = 20;
+const numTrees = 10;
 
 // Audio Implementation-----------------------------------------------------------
 const listener = new THREE.AudioListener();
@@ -60,13 +60,13 @@ const fallSound = new THREE.Audio(listener);
 // Create a growing sound
 const growSound = new THREE.Audio(listener);
 const audioLoader = new THREE.AudioLoader();
-
 // Use a buffer sound for the falling effect
 let fallSoundBuffer = null;
 let growSoundBuffer = null;
 let insectSoundBuffer = null;
 let birdSoundBuffer = null;
 let rumerSoundBuffer = null;
+
 //Chopping sound
 audioLoader.load('../sounds/chop.wav', function(buffer) {
     fallSoundBuffer = buffer;
@@ -79,27 +79,31 @@ audioLoader.load('../sounds/growing.mp3', function(buffer) {
 }, function() {}, function(error) {
     console.error('Error loading sound:', error);
 });
-
-//Insect Sound
-audioLoader.load('../sounds/grasshoppers.wav', function(buffer) {
-    insectSoundBuffer = buffer;
-    insectSoundBuffer.loop();
-}, function() {}, function(error) {
-    console.error('Error loading sound:', error);
+//Looping sounds configuration-------------------------------------------------------------
+const ambientSounds = [
+    { name: "grasshoppers", threshold: 5, audio: new Audio("sounds/grasshoppers.wav"), volume: 0.1 },
+    { name: "birds", threshold: 15, audio: new Audio("sounds/birds.wav"), volume: 0.2 },
+    { name: "rumor", threshold: 20, audio: new Audio("sounds/rumor.wav"), volume: 1 },
+    { name: "turkey/cayote/idk/choose_guys", threshold: 30, audio: new Audio("https://assets.codepen.io/21542/howler-demo-3.mp3"), volume: 1 }
+];
+ambientSounds.forEach((sound) => {
+    sound.audio.loop = true;
+    sound.audio.volume = 0;
 });
 
-//Bird Sounds
-audioLoader.load('../sounds/birds.wav', function(buffer) {
-    birdSoundBuffer = buffer;
-}, function() {}, function(error) {
-    console.error('Error loading sound:', error);
-});
+function updateSounds(tree_num) {
+    ambientSounds.forEach((sound,index) => {
+        sound.audio.play();
+        const shouldPlay = (tree_num >= sound.threshold);
+        const targetVolume = shouldPlay ? sound.volume : 0; 
+        sound.audio.volume = targetVolume;
 
-
+    })
+};
 
 function lerp(a, b, w) {
     return a + (b - a)*w;
-}
+};
 
 //Tree creation------------------------------------------------------------------------
 function initializeTree(group, x, z, withAnimation = false) {
@@ -280,28 +284,7 @@ function onMouseClick(event) {
         }
     }
 
-    //Checking for enviornmental sounds 
-    console.log(trees);
-    num_trees = trees.length;
-    console.log('Length',num_trees);
-    //Check number of trees 
-    switch (num_trees) {
-        case 30:
-            
-            console.log('30')
-        break;
-        case 20:
-            console.log('20')
-        break;
-        case 10:
-            console.log('10')
-        break;
-        case 5:
-            console.log('5')
-        break;
-        default:
-    }
-
+    updateSounds(trees.length);
 }
 
 // Set up orbit controls for rotation
