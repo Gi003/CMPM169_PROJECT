@@ -302,7 +302,8 @@ function onMouseDown(event) {
 
 function setCameraDistance(dist) {
     camera.position.set(0, 0, 0);
-    camera.position.add(camera.getWorldDirection());
+    const direction = new THREE.Vector3();
+    camera.position.add(camera.getWorldDirection(direction));
     camera.position.multiplyScalar(-dist);
     camera.lookAt(0, 0, 0);
 }
@@ -313,17 +314,6 @@ function onMouseMove(event) {
             x: event.clientX - previousMousePosition.x,
             y: event.clientY - previousMousePosition.y
         };
-        
-        /*
-        // Rotate scene based on mouse movement
-        scene.rotation.y += deltaMove.x * 0.01;
-        
-        // Limit vertical rotation to prevent flipping
-        const potentialRotation = scene.rotation.x + deltaMove.y * 0.01;
-        if (potentialRotation < Math.PI/4 && potentialRotation > -Math.PI/4) {
-            scene.rotation.x = potentialRotation;
-        }
-        */
 
         // Rotate camera instead of scene (attempt to fix raycast problem)
         const dist = camera.position.length();
