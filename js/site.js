@@ -63,9 +63,6 @@ const audioLoader = new THREE.AudioLoader();
 // Use a buffer sound for the falling effect
 let fallSoundBuffer = null;
 let growSoundBuffer = null;
-let insectSoundBuffer = null;
-let birdSoundBuffer = null;
-let rumerSoundBuffer = null;
 
 //Chopping sound
 audioLoader.load('../sounds/chop.wav', function(buffer) {
