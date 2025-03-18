@@ -78,10 +78,23 @@ audioLoader.load('../sounds/growing.mp3', function(buffer) {
 });
 //Looping sounds configuration-------------------------------------------------------------
 const ambientSounds = [
+    /* --- OLD SOUNDS --- (for now)
     { name: "grasshoppers", threshold: 5, audio: new Audio("sounds/grasshoppers.wav"), volume: 0.1 },
     { name: "birds", threshold: 15, audio: new Audio("sounds/birds.wav"), volume: 0.2 },
     { name: "rumor", threshold: 20, audio: new Audio("sounds/rumor.wav"), volume: 1 },
     { name: "turkey/cayote/idk/choose_guys", threshold: 30, audio: new Audio("sounds/rumor.wav"), volume: 1 }
+    */ 
+
+    { name: "chrip1", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp1.wav"), volume: 1},
+    { name: "chrip2", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp2.wav"), volume: 1},
+    { name: "chrip3", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp3.wav"), volume: 1},
+    { name: "chrip4", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp4.wav"), volume: 1},
+    { name: "birdloop", threshold: 5, audio: new Audio("sounds/soundlayers/birdsoundLoop.wav"), volume: 1},
+
+    { name: "crickets", threshold: 5, audio: new Audio("sounds/soundlayers/crickets.wav"), volume: 1},
+    { name: "mosquito", threshold: 5, audio: new Audio("sounds/soundlayers/mosquito.wav"), volume: 1},
+    
+    { name: "frog", threshold: 5, audio: new Audio("sounds/soundlayers/frogCroak.wav"), volume: 1},
 ];
 ambientSounds.forEach((sound) => {
     sound.audio.loop = true;
