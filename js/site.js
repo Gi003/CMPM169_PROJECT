@@ -3,7 +3,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87CEEB); // Sky blue background
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 30, 60);
+camera.position.set(0, 15, 30);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -56,7 +56,7 @@ const groundTexture = textureLoader.load('./textures/forrest_ground_01_diff_1k.j
 // Create a Dirt Box for the ground
 const groundGeometry = new THREE.BoxGeometry(50, 10, 50, 20, 20, 20);
 const groundMaterial = new THREE.MeshStandardMaterial({ 
-    map: groundTexture
+    map: grassTexture
 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 
@@ -157,7 +157,7 @@ function lerp(a, b, w) {
 function initializeTree(group, x, z, withAnimation = false) {
     // Set tree position
     let y = noise.perlin2(x * 0.1, z * 0.1) * 5;
-    group.position.set(x, y, z);
+    group.position.set(x, y-0.1, z);
 
     const targetScale = lerp(2/3, 4/3, Math.random());
 
