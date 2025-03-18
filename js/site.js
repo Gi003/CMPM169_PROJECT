@@ -51,6 +51,11 @@ scene.add(ground);
 const trees = [];
 const numTrees = 10;
 
+// HTML elements
+const money = document.getElementById("money");
+money.textContent = "💸 0";
+moneyValue = 0;
+
 // Audio Implementation-----------------------------------------------------------
 const listener = new THREE.AudioListener();
 camera.add(listener);
@@ -85,16 +90,17 @@ const ambientSounds = [
     { name: "turkey/cayote/idk/choose_guys", threshold: 30, audio: new Audio("sounds/rumor.wav"), volume: 1 }
     */ 
 
-    { name: "chrip1", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp1.wav"), volume: 1},
-    { name: "chrip2", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp2.wav"), volume: 1},
-    { name: "chrip3", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp3.wav"), volume: 1},
-    { name: "chrip4", threshold:5, audio: new Audio("sounds/soundlayers/birdChirp4.wav"), volume: 1},
-    { name: "birdloop", threshold: 5, audio: new Audio("sounds/soundlayers/birdsoundLoop.wav"), volume: 1},
+    { name: "chrip1", threshold:10, audio: new Audio("sounds/soundlayers/birdChirp1.wav"), volume: 1},
+    { name: "chrip2", threshold:20, audio: new Audio("sounds/soundlayers/birdChirp2.wav"), volume: 1},
+    { name: "chrip3", threshold:20, audio: new Audio("sounds/soundlayers/birdChirp3.wav"), volume: 1},
+    { name: "chrip4", threshold:15, audio: new Audio("sounds/soundlayers/birdChirp4.wav"), volume: 1},
+    { name: "birdloop", threshold: 10, audio: new Audio("sounds/soundlayers/birdsoundLoop.wav"), volume: 1},
 
-    { name: "crickets", threshold: 5, audio: new Audio("sounds/soundlayers/crickets.wav"), volume: 1},
+    { name: "crickets", threshold: 10, audio: new Audio("sounds/soundlayers/crickets.wav"), volume: 1},
     { name: "mosquito", threshold: 5, audio: new Audio("sounds/soundlayers/mosquito.wav"), volume: 1},
+    { name: "grasshoppers", threshold: 5, audio: new Audio("sounds/grasshoppers.wav"), volume: 0.5 },
     
-    { name: "frog", threshold: 5, audio: new Audio("sounds/soundlayers/frogCroak.wav"), volume: 1},
+    { name: "frog", threshold: 3, audio: new Audio("sounds/soundlayers/frogCroak.wav"), volume: 1},
 ];
 ambientSounds.forEach((sound) => {
     sound.audio.loop = true;
@@ -121,6 +127,10 @@ function initializeTree(group, x, z, withAnimation = false) {
     group.position.set(x, 0, z);
 
     const targetScale = lerp(2/3, 4/3, Math.random());
+
+    //update money value
+    moneyValue -= 50;
+    money.textContent = "💸 " + moneyValue;
 
     // If animation requested, start with zero scale
     if (withAnimation) {
@@ -276,7 +286,8 @@ function onMouseClick(event) {
             // Start the falling animation if not already falling
             if (!trees[treeIndex].isFalling && !trees[treeIndex].removed) {
                 trees[treeIndex].isFalling = true;
-                
+                moneyValue += 100;
+                money.textContent = "💸 " + moneyValue;
                 // Play the sound
                 if (fallSoundBuffer) {
                     fallSound.setBuffer(fallSoundBuffer);
