@@ -53,8 +53,8 @@ const numTrees = 10;
 
 // HTML elements
 const money = document.getElementById("money");
-money.textContent = "💸 0";
-moneyValue = 0;
+money.textContent = "💸 500";
+moneyValue = 500;
 
 // Audio Implementation-----------------------------------------------------------
 const listener = new THREE.AudioListener();
