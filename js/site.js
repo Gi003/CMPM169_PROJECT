@@ -3,7 +3,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87CEEB); // Sky blue background
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 15, 30);
+camera.position.set(0, 30, 60);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -25,27 +25,59 @@ const textureLoader = new THREE.TextureLoader();
 const grassTexture = textureLoader.load('./textures/rocky_terrain_02_diff_4k.jpg');
 
 // Create a Grass Plane for the ground
-const grassGeometry = new THREE.PlaneGeometry(50, 50);
+const grassGeometry = new THREE.PlaneGeometry(50, 50, 20, 20);
 const grassMaterial = new THREE.MeshStandardMaterial({
     map: grassTexture
 });
 const grass = new THREE.Mesh(grassGeometry, grassMaterial);
 grass.rotation.x = -Math.PI / 2;
-grass.position.y = 0.005;
-scene.add(grass);
+grass.position.y = 0;
+
+// Create the noise generator instance
+const noise = new Noise(0); // Using a random seed
+
+// positionAttribute = grassGeometry.attributes.position;
+// const vertex = new THREE.Vector3();
+// for (let i = 0; i < positionAttribute.count; i++) {
+//     vertex.fromBufferAttribute(positionAttribute, i);
+//     if (vertex.z > -3){
+//         let noiseValue = noise.perlin2(vertex.x * 0.1, vertex.y * 0.1) * 5;
+//         vertex.z += noiseValue;
+//         positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z)
+//     }
+// }
+
+// positionAttribute.needsUpdate = true;
+// scene.add(grass);
 
 // Load Texture For Dirt
 const groundTexture = textureLoader.load('./textures/forrest_ground_01_diff_1k.jpg');
 
 // Create a Dirt Box for the ground
-const groundGeometry = new THREE.BoxGeometry(50, 50, 5);
+const groundGeometry = new THREE.BoxGeometry(50, 10, 50, 20, 20, 20);
 const groundMaterial = new THREE.MeshStandardMaterial({ 
     map: groundTexture
 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = -2.5; // Box origin offset from top face
+
+let positionAttributeground = groundGeometry.attributes.position;
+const ground_vertex = new THREE.Vector3();
+
+ground.position.y = -5;
+
 scene.add(ground);
+
+for (let i=0; i < positionAttributeground.count; i++) {
+    ground_vertex.fromBufferAttribute(positionAttributeground, i);
+    if (ground_vertex.y >= 4) {
+        let noiseValue = noise.perlin2(ground_vertex.x * 0.1, ground_vertex.z * 0.1) * 5;
+        ground_vertex.y += noiseValue;
+        positionAttributeground.setXYZ(i, ground_vertex.x, ground_vertex.y, ground_vertex.z)
+    }
+
+}
+
+positionAttributeground.needsUpdate = true;
 
 // Create trees
 const trees = [];
@@ -105,7 +137,8 @@ function lerp(a, b, w) {
 //Tree creation------------------------------------------------------------------------
 function initializeTree(group, x, z, withAnimation = false) {
     // Set tree position
-    group.position.set(x, 0, z);
+    let y = noise.perlin2(x * 0.1, z * 0.1) * 5;
+    group.position.set(x, y, z);
 
     const targetScale = lerp(2/3, 4/3, Math.random());
 
