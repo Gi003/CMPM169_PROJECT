@@ -128,8 +128,8 @@ const ambientSounds = [
     { name: "chrip4", threshold:15, audio: new Audio("sounds/soundlayers/birdChirp4.wav"), volume: 1},
     { name: "birdloop", threshold: 10, audio: new Audio("sounds/soundlayers/birdsoundLoop.wav"), volume: 1},
 
-    { name: "crickets", threshold: 10, audio: new Audio("sounds/soundlayers/crickets.wav"), volume: 1},
-    { name: "mosquito", threshold: 5, audio: new Audio("sounds/soundlayers/mosquito.wav"), volume: 1},
+    { name: "crickets", threshold: 10, audio: new Audio("sounds/soundlayers/crickets.wav"), volume: 0.5},
+    { name: "mosquito", threshold: 5, audio: new Audio("sounds/soundlayers/mosquito.wav"), volume: 0.5},
     { name: "grasshoppers", threshold: 5, audio: new Audio("sounds/grasshoppers.wav"), volume: 0.5 },
     
     { name: "frog", threshold: 3, audio: new Audio("sounds/soundlayers/frogCroak.wav"), volume: 1},
