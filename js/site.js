@@ -409,6 +409,53 @@ window.addEventListener('resize', function() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }, false);
 
+// Handle creating birds after tree is destroyed
+function createBirds(position) {
+    const birdCount = Math.floor(Math.random() * 3) + 1; // Random between 1 and 3 birds
+    const birds = [];
+
+    for (let i = 0; i < birdCount; i++) {
+        const birdGeometry = new THREE.ConeGeometry(0.2, 0.5, 4);
+        const birdMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        const bird = new THREE.Mesh(birdGeometry, birdMaterial);
+        
+        bird.position.set(
+            position.x + (Math.random() - 0.5) * 1.5, // birds placed randomly
+            position.y + 1, // Bird start above tree slightly
+            position.z + (Math.random() - 0.5) * 1.5
+        );
+
+        scene.add(bird);
+        birds.push(bird);
+    }
+
+    function animateBirds() {
+        let frame = 0;
+        function move() {
+            frame++;
+
+            birds.forEach((bird, index) => {
+                bird.position.y += 0.05; 
+                bird.position.x += (Math.random() - 0.5) * 0.02; 
+                bird.position.z += (Math.random() - 0.5) * 0.02;
+
+                if (frame > 100) { 
+                    scene.remove(bird);
+                    birds.splice(index, 1);
+                }
+            });
+
+            if (birds.length > 0) {
+                requestAnimationFrame(move);
+            }
+        }
+
+        move();
+    }
+
+    animateBirds();
+}
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
@@ -436,6 +483,10 @@ function animate() {
                     scene.remove(tree.group);
                     tree.removed = true;
                 }, 500);
+            }
+            if (!tree.birdsSpawned) { // Makes birds spawn once each time a tree falls
+                createBirds(tree.group.position);
+                tree.birdsSpawned = true; // Mark as triggered so birds spawn once
             }
         }
         
